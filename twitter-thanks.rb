@@ -4,9 +4,9 @@ require 'Twitter'
 # https://apps.twitter.com
 # authenticate it for your account
 # fill in the following
-config = {consumer_key:'rXpb2PY9lKqgwnM8zkPKt3YZh',  consumer_secret:'2Qu3AU2Xw0NFu9M6MlONtBQ7LjKad2sP8GNZ7XNJhjvdjn2JSf',
-access_token:'432276877-cpwQW4ZDAEKxH9YFS74O03yMUjinrCUni398ePAC',  access_token_secret: 'pjPYvTNKxb3bfqnIwewYU2x5UUTmHy6HvQeYnx1FmnsuH'}
-me = 'Mike Dowling' # to prevent DM yourself
+config = {consumer_key:'lZLYSIi4dbgIN9yRzTcIeP8Fk',  consumer_secret:'3BqN9Qz9iVdYpPKJxXR0hjuaC1KXXPc03lIv02PyZGnXo5CRhR',
+access_token:'2776153651-zpSsnVPbMUhl34fWK2DdCmAhc2kG41aDPaZxiBP',  access_token_secret: 'yiXJmkrdheEi4PNGu4IS7WcX1tC9y9hDR06EFqOtIg2Gg'}
+me = 'Pub Questbot' # to prevent DM yourself
 
 class IntervalJob
  
