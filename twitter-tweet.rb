@@ -18,20 +18,39 @@ class TwitterTweet
 	}
 
 	user_hash.each do |twitterhandlename|
-		consumer_key:'lZLYSIi4dbgIN9yRzTcIeP8Fk', 
-		consumer_secret:'3BqN9Qz9iVdYpPKJxXR0hjuaC1KXXPc03lIv02PyZGnXo5CRhR',
-		access_token:'2776153651-zpSsnVPbMUhl34fWK2DdCmAhc2kG41aDPaZxiBP',  
-		access_token_secret: 'yiXJmkrdheEi4PNGu4IS7WcX1tC9y9hDR06EFqOtIg2Gg'
+		## Verify connection to Twitter API
+		consumer_key = OAuth::Consumer.new(
+	    "lZLYSIi4dbgIN9yRzTcIeP8Fk",
+	    "3BqN9Qz9iVdYpPKJxXR0hjuaC1KXXPc03lIv02PyZGnXo5CRhR")
+	access_token = OAuth::Token.new(
+	    "2776153651-zpSsnVPbMUhl34fWK2DdCmAhc2kG41aDPaZxiBP",
+	    "yiXJmkrdheEi4PNGu4IS7WcX1tC9y9hDR06EFqOtIg2Gg")
 		baseurl = "https://api.twitter.com"
+		address = URI("#{baseurl}/1.1/account/verify_credentials.json")
+		http = Net::HTTP.new address.host, address.port
+		http.use_ssl = true
+		http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+		request = Net::HTTP::Get.new address.request_uri
+		request.oauth! http, consumer_key, access_token
+		http.start
+		response = http.request request
+		puts "The response status was #{response.code}"
+		
+		# Uses "/1.1/statuses/update.json" to send a tweet.
+		# NOT "/1.1/statuses/user_timeline.json" to fetch 
+		# total timeline, or "/1.1/statuses/show.json", which
+		# takes an 'id' parameter and returns the
+		# representation of a single Tweet.
+
 		path    = "/1.1/statuses/update.json"
-		address = URI("#{baseurl}#{path}")
-		request = Net::HTTP::Post.new address.request_uri
+		secondaddress = URI("#{baseurl}#{path}")
+		request = Net::HTTP::Post.new secondaddress.request_uri
 		request.set_form_data(
 		  "status" => "@"+twitterhandlename+" Test tweet #1",
 		)
 
 		# Set up HTTP.
-		http             = Net::HTTP.new address.host, address.port
+		http             = Net::HTTP.new secondaddress.host, secondaddress.port
 		http.use_ssl     = true
 		http.verify_mode = OpenSSL::SSL::VERIFY_PEER
 
