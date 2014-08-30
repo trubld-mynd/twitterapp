@@ -17,7 +17,7 @@ class TwitterTweet
 			"DreamLightning" => 1854106068
 		}
 
-		user_hash.each do |twitterhandlename| {
+		user_hash.each do |twitterhandlename| 
 			## Verify connection to Twitter API
 			consumer_key = OAuth::Consumer.new(
 		    "lZLYSIi4dbgIN9yRzTcIeP8Fk",
@@ -68,7 +68,7 @@ class TwitterTweet
 			  puts "Could not send the Tweet! " +
 			  "Code:#{response.code} Body:#{response.body}"
 			end
-		} end
+		end
 	end
 end
 
