@@ -1,1 +1,1 @@
-clock: bundle exec clockwork twitter-tweet.rb
+clock: bundle exec clockwork twitter-tweet-oneonly.rb
