@@ -17,7 +17,7 @@ class TwitterTweet < PubquestBotTwitter
 		"DreamLightning" => 1854106068
 	}
 
-	user_hash.each do |twitterhandlename| {
+	user_hash.each do |twitterhandlename|
 		baseurl = "https://api.twitter.com"
 		path    = "/1.1/statuses/update.json"
 		address = URI("#{baseurl}#{path}")
@@ -45,7 +45,7 @@ class TwitterTweet < PubquestBotTwitter
 		  puts "Could not send the Tweet! " +
 		  "Code:#{response.code} Body:#{response.body}"
 		end
-	}
+	end
 end
 
 include Clockwork
