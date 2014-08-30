@@ -38,7 +38,7 @@ class TwitterTweet
 				"TheWindSlayers" => 1854150030
 			}
 
-			user_hash.ech do |name, number|
+			user_hash.each do |name, number|
 			path    = "/1.1/statuses/update.json"
 			secondaddress = URI("#{baseurl}#{path}")
 			request = Net::HTTP::Post.new secondaddress.request_uri
