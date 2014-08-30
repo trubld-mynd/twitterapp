@@ -1,1 +1,1 @@
-clock: bundle exec clockwork lib/clock.rb
+clock: bundle exec clockwork twitter-tweet.rb

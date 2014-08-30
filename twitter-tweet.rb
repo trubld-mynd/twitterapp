@@ -2,6 +2,10 @@ require 'rubygems'
 require 'oauth'
 require 'json'
 
+require 'clockwork'
+require './config/boot'
+require './config/environment'
+
 class TwitterTweet < PubquestBotTwitter
 
 	user_hash = {
@@ -43,3 +47,7 @@ class TwitterTweet < PubquestBotTwitter
 		end
 	}
 end
+
+include Clockwork
+
+every(2.minutes, 'Queueing twitter-tweet') { Delayed::Job.enqueue TwitterTweet.new }
