@@ -6,7 +6,7 @@ require 'clockwork'
 require './config/boot'
 require './config/environment'
 
-class TwitterTweet < PubquestBotTwitter
+class TwitterTweet 
 
 	user_hash = {
 		"PoisonSlammers" => 1854082506,
@@ -18,6 +18,10 @@ class TwitterTweet < PubquestBotTwitter
 	}
 
 	user_hash.each do |twitterhandlename|
+		consumer_key:'lZLYSIi4dbgIN9yRzTcIeP8Fk', 
+		consumer_secret:'3BqN9Qz9iVdYpPKJxXR0hjuaC1KXXPc03lIv02PyZGnXo5CRhR',
+		access_token:'2776153651-zpSsnVPbMUhl34fWK2DdCmAhc2kG41aDPaZxiBP',  
+		access_token_secret: 'yiXJmkrdheEi4PNGu4IS7WcX1tC9y9hDR06EFqOtIg2Gg'
 		baseurl = "https://api.twitter.com"
 		path    = "/1.1/statuses/update.json"
 		address = URI("#{baseurl}#{path}")
