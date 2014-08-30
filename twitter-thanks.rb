@@ -8,7 +8,7 @@ config = {consumer_key:'lZLYSIi4dbgIN9yRzTcIeP8Fk',  consumer_secret:'3BqN9Qz9i
 access_token:'2776153651-zpSsnVPbMUhl34fWK2DdCmAhc2kG41aDPaZxiBP',  access_token_secret: 'yiXJmkrdheEi4PNGu4IS7WcX1tC9y9hDR06EFqOtIg2Gg'}
 me = 'Pub Questbot' # to prevent DM yourself
 
-class IntervalJob
+class TwitterThanks < PubquestBotTwitter
  
 Thread.new do
 loop do

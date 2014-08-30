@@ -4,4 +4,4 @@ require './config/environment'
 
 include Clockwork
 
-every(2.minutes, 'Queueing follow_thanks') { Delayed::Job.enqueue IntervalJob.new }
+every(2.minutes, 'Queueing twitter-read') { Delayed::Job.enqueue TwitterRead.new }
