@@ -70,8 +70,8 @@ class TwitterTweet
 			
 			## SEARCH TWEET FOR MARKERS
 			markers = ["@pubquestbot", "d"]
-			tweets.select do |phrase|
-				if markers.all? {|marker| phrase.include? marker }
+			
+				if tweets.select do |phrase| {markers.all? {|marker| phrase.include? marker }}
 					## SPLIT TWEET UP INTO WORDS 
 						words = tweets.split(" ")
 					## SEARCH FOR INTERGERS & GENERATE
