@@ -1,1 +1,1 @@
-clock: bundle exec clockwork twitter-tweet-looptest.rb
+clock: bundle exec clockwork twitter-tweet-loopreadandtweettest.rb
