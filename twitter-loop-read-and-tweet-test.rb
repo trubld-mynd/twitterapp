@@ -50,7 +50,7 @@ class TwitterTweet
 
 				def print_timeline(tweets)
 				  tweets.each do |tweet|
-				    puts tweet["user"]["name"] + " - " + tweet["text"]
+				    puts tweet["user"]["screen_name"] + " - " + tweet["text"]
 				    end
 				end
 
@@ -67,13 +67,21 @@ class TwitterTweet
 				  tweets = JSON.parse(response.body)
 				  print_timeline(tweets)
 				end
-				
+			
+			## PREPARE 
+				if tweets <= 140
+					tweetout = tweets
+				else
+					tweetout = tweets.slice 0..140
+				end
+			## SEARCH
+
 			## TWEET BACK THE TEXT_TO_TWEET
 			thirdpath    = "/1.1/statuses/update.json"
 			thirdaddress = URI("#{baseurl}#{thirdpath}")
 			request = Net::HTTP::Post.new thirdaddress.request_uri
 			request.set_form_data(
-			  "status" => "@#{name} - #{tweets}",
+			  "status" => "@#{tweetout}",
 			)
 
 			# Set up HTTP.
