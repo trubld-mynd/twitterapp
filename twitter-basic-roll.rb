@@ -42,7 +42,7 @@ class TwitterTweet
 		"DreamLightning" => 1854106068
 	}
 
-		keyword = ["pubquestbot"]
+		keywords = ["pubquestbot", "drinks"]
 
 		user_hash.each do |name, number|
 
@@ -71,9 +71,9 @@ class TwitterTweet
 		        rollout = Array.new
 		        tweetout = Array.new
 		        # CHECK TWEET FOR KEY WORDS
-		        if tweet["text"].to_s.downcase.include? keyword[0]
+		        if keywords.all?{|str| tweet["text"].to_s.downcase.include? str}
 		        # If Key word found in tweet
-		        puts "Key word found in " + tweet["user"]["screen_name"] + " - " + tweet["text"]
+		        puts "Key words found in " + tweet["user"]["screen_name"] + " - " + tweet["text"]
 		        ## SPLIT TWEET UP INTO WORDS 
 			    words = tweet["text"].to_s.split(" ")
 			    ## SEARCH FOR INTERGERS & GENERATE
