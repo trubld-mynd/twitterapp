@@ -119,9 +119,9 @@ class TwitterTweet
 						  puts "Could not send the Tweet! " +
 						  "Code:#{response.code} Body:#{response.body}"
 						end
-					else
-						puts "no markers"
 					end
+				else
+					puts "no markers"
 				end
 			end	
 		end
