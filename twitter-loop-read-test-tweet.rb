@@ -79,14 +79,14 @@ class TwitterTweet
 							words.each do |word|
 								if word.is_i? 
 									case integerlength
-										when word <= 4
-											puts word
-											tweetout = word -1 + rand(2)
-										when word > 4
-											tweetout = "Bad number! Must be <=4!"
-										else
-											puts "#"
-										end
+									when word <= 4
+										puts word
+										tweetout = word -1 + rand(2)
+									when word > 4
+										tweetout = "Bad number! Must be <=4!"
+									else
+										puts "#"
+									end
 								else
 									puts "#"
 								end
@@ -121,6 +121,7 @@ class TwitterTweet
 					end
 				else
 					puts "no markers"
+				end
 			end	
 		end
 	end
