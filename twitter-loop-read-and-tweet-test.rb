@@ -50,7 +50,8 @@ class TwitterTweet
 
 				def print_timeline(tweets)
 				  tweets.each do |tweet|
-				    text_to_tweet = tweet["text"]
+				    return tweet["text"]
+				    text_to_tweet = "test" + tweet["text"] 
 				  end
 				end
 
@@ -75,7 +76,7 @@ class TwitterTweet
 			thirdaddress = URI("#{baseurl}#{thirdpath}")
 			request = Net::HTTP::Post.new thirdaddress.request_uri
 			request.set_form_data(
-			  "status" => "@#{name} - #{text_to_tweet}",
+			  "status" => "@#{name} - #{text_to_tweet.to_s}",
 			)
 
 			# Set up HTTP.
