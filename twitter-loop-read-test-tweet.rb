@@ -68,41 +68,60 @@ class TwitterTweet
 				  print_timeline(tweets)
 				end
 			
-			## PREPARE 
-				if tweets <= 139
-					tweetout = tweets
+			## SEARCH TWEET FOR MARKERS
+			markers = ["@pubquestbot", "d"]
+			tweets.select do |phrase|
+				if markers.all? {|marker| phrase.include? marker }
+					## SPLIT TWEET UP INTO WORDS 
+						words = tweets.split(" ")
+					## SEARCH FOR INTERGERS & GENERATE
+					## RANDOM +/- 1 TWEETOUTS
+							words.each do |word|
+								if word.is_i? 
+									case integerlength
+										when word <= 4
+											puts word
+											tweetout = word -1 + rand(2)
+										when word > 4
+											tweetout = "Bad number! Must be <=4!"
+										else
+											puts "#"
+										end
+								else
+									puts "#"
+								end
+							end
+
+					## TWEET BACK THE TWEETOUT
+					thirdpath    = "/1.1/statuses/update.json"
+					thirdaddress = URI("#{baseurl}#{thirdpath}")
+					request = Net::HTTP::Post.new thirdaddress.request_uri
+					request.set_form_data(
+					  "status" => "@#{name} - #{tweetout}",
+					)
+
+					# Set up HTTP.
+					http             = Net::HTTP.new thirdaddress.host, thirdaddress.port
+					http.use_ssl     = true
+					http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+
+					# Issue the request.
+					request.oauth! http, consumer_key, access_token
+					http.start
+					response = http.request request
+
+					# Parse and print the Tweet if the response code was 200
+					tweet = nil
+					if response.code == '200' then
+					  tweet = JSON.parse(response.body)
+					  puts "Successfully sent #{tweet["text"]}"
+					else
+					  puts "Could not send the Tweet! " +
+					  "Code:#{response.code} Body:#{response.body}"
+					end
 				else
-					tweetout = tweets.slice 0..1139
-				end
-			## SEARCH
-
-			## TWEET BACK THE TEXT_TO_TWEET
-			thirdpath    = "/1.1/statuses/update.json"
-			thirdaddress = URI("#{baseurl}#{thirdpath}")
-			request = Net::HTTP::Post.new thirdaddress.request_uri
-			request.set_form_data(
-			  "status" => "@#{tweetout}",
-			)
-
-			# Set up HTTP.
-			http             = Net::HTTP.new thirdaddress.host, thirdaddress.port
-			http.use_ssl     = true
-			http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-
-			# Issue the request.
-			request.oauth! http, consumer_key, access_token
-			http.start
-			response = http.request request
-
-			# Parse and print the Tweet if the response code was 200
-			tweet = nil
-			if response.code == '200' then
-			  tweet = JSON.parse(response.body)
-			  puts "Successfully sent #{tweet["text"]}"
-			else
-			  puts "Could not send the Tweet! " +
-			  "Code:#{response.code} Body:#{response.body}"
-			end
+					puts "no markers"
+			end	
 		end
 	end
 end
