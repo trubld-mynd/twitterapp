@@ -72,10 +72,10 @@ class TwitterTweet
 			markers = ["@pubquestbot", "d"]
 			
 				if tweets.select do |phrase| {markers.all? {|marker| phrase.include? marker }}
-					## SPLIT TWEET UP INTO WORDS 
-						words = tweets.split(" ")
-					## SEARCH FOR INTERGERS & GENERATE
-					## RANDOM +/- 1 TWEETOUTS
+						## SPLIT TWEET UP INTO WORDS 
+							words = tweets.split(" ")
+						## SEARCH FOR INTERGERS & GENERATE
+						## RANDOM +/- 1 TWEETOUTS
 							words.each do |word|
 								if word.is_i? 
 									case integerlength
@@ -92,35 +92,36 @@ class TwitterTweet
 								end
 							end
 
-					## TWEET BACK THE TWEETOUT
-					thirdpath    = "/1.1/statuses/update.json"
-					thirdaddress = URI("#{baseurl}#{thirdpath}")
-					request = Net::HTTP::Post.new thirdaddress.request_uri
-					request.set_form_data(
-					  "status" => "@#{name} - #{tweetout}",
-					)
+						## TWEET BACK THE TWEETOUT
+						thirdpath    = "/1.1/statuses/update.json"
+						thirdaddress = URI("#{baseurl}#{thirdpath}")
+						request = Net::HTTP::Post.new thirdaddress.request_uri
+						request.set_form_data(
+						  "status" => "@#{name} - #{tweetout}",
+						)
 
-					# Set up HTTP.
-					http             = Net::HTTP.new thirdaddress.host, thirdaddress.port
-					http.use_ssl     = true
-					http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+						# Set up HTTP.
+						http             = Net::HTTP.new thirdaddress.host, thirdaddress.port
+						http.use_ssl     = true
+						http.verify_mode = OpenSSL::SSL::VERIFY_PEER
 
-					# Issue the request.
-					request.oauth! http, consumer_key, access_token
-					http.start
-					response = http.request request
+						# Issue the request.
+						request.oauth! http, consumer_key, access_token
+						http.start
+						response = http.request request
 
-					# Parse and print the Tweet if the response code was 200
-					tweet = nil
-					if response.code == '200' then
-					  tweet = JSON.parse(response.body)
-					  puts "Successfully sent #{tweet["text"]}"
+						# Parse and print the Tweet if the response code was 200
+						tweet = nil
+						if response.code == '200' then
+						  tweet = JSON.parse(response.body)
+						  puts "Successfully sent #{tweet["text"]}"
+						else
+						  puts "Could not send the Tweet! " +
+						  "Code:#{response.code} Body:#{response.body}"
+						end
 					else
-					  puts "Could not send the Tweet! " +
-					  "Code:#{response.code} Body:#{response.body}"
+						puts "no markers"
 					end
-				else
-					puts "no markers"
 				end
 			end	
 		end
