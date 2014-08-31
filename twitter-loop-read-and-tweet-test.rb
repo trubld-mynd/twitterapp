@@ -45,7 +45,7 @@ class TwitterTweet
 	    			"screen_name" => name,
 					"count" => 1,
 					)
-				secondaddress = URI("#{baseurl}#{path}?#{query}")
+				secondaddress = URI("#{baseurl}#{secondpath}?#{query}")
 				request = Net::HTTP::Get.new secondaddress.request_uri
 
 				def print_timeline(tweets)
@@ -54,7 +54,7 @@ class TwitterTweet
 				  end
 				end
 
-				http             = Net::HTTP.new address.host, address.port
+				http             = Net::HTTP.new secondaddress.host, secondaddress.port
 				http.use_ssl     = true
 				http.verify_mode = OpenSSL::SSL::VERIFY_PEER
 
