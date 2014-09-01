@@ -8,22 +8,24 @@ require 'clockwork'
 require './config/boot'
 require './config/environment'
 
-t = Time::new - (60 * 20)
-puts t
 
-## Establish Users
-names = ["PoisonSlammers", "TheWindSlayers", "PurpleSquirrels", "TheGhostSharks", "MightyCommandos", "DreamLightning"]
-users_list = Hash[names.map{|user| [user, 0]}]
-users_score = Hash[names.map{|user| [user, 0]}]
-users_last_time = Hash[names.map{|user| [user, 0]}]
-users_last_location = Hash[names.map{|user| [user, 0]}]
-
-## Establish Keywords
-keywords = ["pubquestbot", "drinks"]
 
 class TwitterTweet 
 	def initialize()
 		
+		t = Time::new - (60 * 20)
+		puts t
+
+		## Establish Users
+		names = ["PoisonSlammers", "TheWindSlayers", "PurpleSquirrels", "TheGhostSharks", "MightyCommandos", "DreamLightning"]
+		users_list = Hash[names.map{|user| [user, 0]}]
+		users_score = Hash[names.map{|user| [user, 0]}]
+		users_last_time = Hash[names.map{|user| [user, 0]}]
+		users_last_location = Hash[names.map{|user| [user, 0]}]
+
+		## Establish Keywords
+		keywords = ["pubquestbot", "drinks"]
+
 		consumer_key = OAuth::Consumer.new(
 		"lZLYSIi4dbgIN9yRzTcIeP8Fk",
 		"3BqN9Qz9iVdYpPKJxXR0hjuaC1KXXPc03lIv02PyZGnXo5CRhR")
