@@ -1,1 +1,1 @@
-clock: bundle exec clockwork twitter-basic-roll.rb
+clock: bundle exec clockwork twitter-timed-roll.rb
