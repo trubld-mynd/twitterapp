@@ -32,7 +32,7 @@ class TwitterTweet
 		"yiXJmkrdheEi4PNGu4IS7WcX1tC9y9hDR06EFqOtIg2Gg")
 		baseurl = "https://api.twitter.com"
 
-		user_hash.each do |name, number|
+		users_list.each do |name, number|
 
 		secondpath = "/1.1/statuses/user_timeline.json"
 		query = URI.encode_www_form(
