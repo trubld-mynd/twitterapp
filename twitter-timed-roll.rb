@@ -70,7 +70,7 @@ class TwitterTweet
 		        time_arr.insert(3, time_time[0].to_i, time_time[1].to_i, time_time[2].to_i)
 		        tweet_t = Time.new(time_arr[7].to_i,Date::ABBR_MONTHNAMES.index(time_arr[1]),time_arr[2].to_i,time_arr[3],time_arr[4],time_arr[5])
 		        
-		        if users_last_time[name] == 0 || (tweet_t > users_last_time[name] && tweet_t < t)
+		        if users_last_time[name] == 0 || (tweet_t > (users_last_time[name] + (60 * 20) )&& tweet_t < t)
 
 		        puts tweet["user"]["screen_name"] + " - " + tweet["text"]
 		        tweetout = nil
