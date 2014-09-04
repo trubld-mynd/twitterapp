@@ -81,4 +81,4 @@ end
 
 include Clockwork
 
-every(1.day, 'Queueing twitter-direct-messages', :at => '00:00') { Delayed::Job.enqueue TwitterMessage.new }
+every(1.day, 'Queueing twitter-direct-messages', :at => '12:12') { Delayed::Job.enqueue TwitterMessage.new }
