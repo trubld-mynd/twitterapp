@@ -16,7 +16,7 @@ puts t
 
 ## Establish Users
  
-names = ["PoisonSlammers", "TheWindSlayers"]
+names = ["PoisonSlammers", "TheWindSlayers", "PurpleSquirrels", "TheGhostSharks", "MightyCommandos", "DreamLightning"]
 users_list = Hash[names.map{|user| [user, 0]}]
 users_score = Hash[names.map{|user| [user, 0]}]
 users_last_time = Hash[names.map{|user| [user, 0]}]
@@ -96,7 +96,7 @@ users_list.each do |name, number|
 secondpath = "/1.1/statuses/user_timeline.json"
 userquery = URI.encode_www_form(
 	"screen_name" => name,
-	"count" => 2,
+	"count" => 20,
 	)
 secondaddress = URI("#{baseurl}#{secondpath}?#{userquery}")
 request = Net::HTTP::Get.new secondaddress.request_uri
