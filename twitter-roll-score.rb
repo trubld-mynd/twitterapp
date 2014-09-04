@@ -8,22 +8,9 @@ require 'clockwork'
 require './config/boot'
 require './config/environment'
 
-class TwitterTweet
+class TwitterDM
     def initialize()
-
-t = Time::new - (60 * 20)
-puts t
-
-## Establish Users
- 
-names = ["PoisonSlammers", "TheWindSlayers", "PurpleSquirrels", "TheGhostSharks", "MightyCommandos", "DreamLightning"]
-users_list = Hash[names.map{|user| [user, 0]}]
-users_score = Hash[names.map{|user| [user, 0]}]
-users_last_time = Hash[names.map{|user| [user, 0]}]
-users_last_location = Hash[names.map{|user| [user, 0]}]
-puts "users_score = " + users_score.to_s
-
-directmessages = ["Welcome to the Pub Quest 2014! Use twitter to play by texting your drink count at each pub (max 4) WITH A PHOTO to @pubquestbot.", "For example, if you've had 3 drinks, take a photo of your team with the drinks, and tweet '@pubquestbot 3 drinks'. Don't forget the pic!", "pubquestbot will randomly +/-1 to your drink count to determine your roll on the gameboard. Always go where you're told. No cheating!", "You can only post to pubquestbot every 20 minutes. If you do it any more often there may be some nasty surprises in store for you...", "The winner will be the first to the final pub, OR the team that gets the furtherest in 2.5 hours. If you want to keep track of the teams...", "...or check the rules, check out the website at http://www.pubquest.info Now go for it!!"]
+        directmessages = ["Welcome to the Pub Quest 2014! Use twitter to play by texting your drink count at each pub (max 4) WITH A PHOTO to @pubquestbot.", "For example, if you've had 3 drinks, take a photo of your team with the drinks, and tweet '@pubquestbot 3 drinks'. Don't forget the pic!", "pubquestbot will randomly +/-1 to your drink count to determine your roll on the gameboard. Always go where you're told. No cheating!", "You can only post to pubquestbot every 20 minutes. If you do it any more often there may be some nasty surprises in store for you...", "The winner will be the first to the final pub, OR the team that gets the furtherest in 2.5 hours. If you want to keep track of the teams...", "...or check the rules, check out the website at http://www.pubquest.info Now go for it!!"]
 
 ## Verify connection to Twitter API
 consumer_key = OAuth::Consumer.new(
@@ -64,9 +51,36 @@ directmessages.each do |message|
               puts "Could not send the Tweet! " +
               "Code:#{response.code} Body:#{response.body}"
             end
-# end of directmessages.each do |message|
+        # end of directmessages.each do |message|
+        end
+    # end of def initialize()
+    end
+# end of class TwitterDM 
 end
 
+class TwitterTweet
+    def initialize()
+
+t = Time::new - (60 * 20)
+puts t
+
+## Establish Users
+ 
+names = ["PoisonSlammers", "TheWindSlayers", "PurpleSquirrels", "TheGhostSharks", "MightyCommandos", "DreamLightning"]
+users_list = Hash[names.map{|user| [user, 0]}]
+users_score = Hash[names.map{|user| [user, 0]}]
+users_last_time = Hash[names.map{|user| [user, 0]}]
+users_last_location = Hash[names.map{|user| [user, 0]}]
+puts "users_score = " + users_score.to_s
+
+## Verify connection to Twitter API
+consumer_key = OAuth::Consumer.new(
+"lZLYSIi4dbgIN9yRzTcIeP8Fk",
+"3BqN9Qz9iVdYpPKJxXR0hjuaC1KXXPc03lIv02PyZGnXo5CRhR")
+access_token = OAuth::Token.new(
+"2776153651-zpSsnVPbMUhl34fWK2DdCmAhc2kG41aDPaZxiBP",
+"yiXJmkrdheEi4PNGu4IS7WcX1tC9y9hDR06EFqOtIg2Gg")
+baseurl = "https://api.twitter.com"
 
 ## Establish Keywords
 keywords = ["pubquestbot", "drinks"]
@@ -286,3 +300,4 @@ end
 include Clockwork
 
 every(2.minutes, 'Queueing twitter-tweet') { Delayed::Job.enqueue TwitterTweet.new }
+every(1.day, 'Queueing instruction-tweets', :at => '12:40') { Delayed::Job.enqueue TwitterDM.new }
