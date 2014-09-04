@@ -22,15 +22,8 @@ users_score = Hash[names.map{|user| [user, 0]}]
 users_last_time = Hash[names.map{|user| [user, 0]}]
 users_last_location = Hash[names.map{|user| [user, 0]}]
 puts "users_score = " + users_score.to_s
-puts users_score["PoisonSlammers"]
 
-## Establish Keywords
-keywords = ["pubquestbot", "drinks"]
-
-## Establish Bar Locations
-bars = [0,1,2,6,2,5,6,7,11,9,10,11,7,13]
-barnames = ["Start", "Bar 1", "Bar2", "Bar 333", "Bar 4", "Bar Five", "Bar666", "Bar 7", "Bar Eight", "Nine9", "Ten", "Bar Eleven", "Bar 12", "Bar 13"]
-barsnls = ["Start","A slow start to ","Go on to ","LADDER! Go straight to ","SNAKE! Go back to ","Move on to ","Head to ","Go on to ","LADDER! Go straight to ","Dance on to ","Rock on to ","Nearly there! Go to ","SNAKE! (Oooh so close!) Go back to ","The end in sight! Go to "]
+directmessages = ["Welcome to the Pub Quest 2014! Use twitter to play by texting your drink count at each pub (max 4) WITH A PHOTO to @pubquestbot.", "For example, if you've had 3 drinks, take a photo of your team with the drinks, and tweet '@pubquestbot 3 drinks'. Don't forget the pic!", "pubquestbot will randomly +/-1 to your drink count to determine your roll on the gameboard. Always go where you're told. No cheating!", "You can only post to pubquestbot every 20 minutes. If you do it any more often there may be some nasty surprises in store for you...", "The winner will be the first to the final pub, OR the team that gets the furtherest in 2.5 hours. If you want to keep track of the teams...", "...or check the rules, check out the website at http://www.pubquest.info Now go for it!!"]
 
 ## Verify connection to Twitter API
 consumer_key = OAuth::Consumer.new(
@@ -40,6 +33,49 @@ access_token = OAuth::Token.new(
 "2776153651-zpSsnVPbMUhl34fWK2DdCmAhc2kG41aDPaZxiBP",
 "yiXJmkrdheEi4PNGu4IS7WcX1tC9y9hDR06EFqOtIg2Gg")
 baseurl = "https://api.twitter.com"
+
+## Post direct tweets for pubquest instructions
+## Use same script for outgoing Tweets
+## As section 3 of the search & tweet.
+directmessages.each do |message|
+            thirdpath    = "/1.1/statuses/update.json"
+            thirdaddress = URI("#{baseurl}#{thirdpath}")
+            request = Net::HTTP::Post.new thirdaddress.request_uri
+            request.set_form_data(
+              "status" => message,
+            )
+            
+            # Set up HTTP.
+            http             = Net::HTTP.new thirdaddress.host, thirdaddress.port
+            http.use_ssl     = true
+            http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+            
+            # Issue the request.
+            request.oauth! http, consumer_key, access_token
+            http.start
+            response = http.request request
+            
+            # Parse and print the Tweet if the response code was 200
+            tweet = nil
+            if response.code == '200' then
+              tweet = JSON.parse(response.body)
+              puts "Successfully sent #{tweet["text"]}"
+            else
+              puts "Could not send the Tweet! " +
+              "Code:#{response.code} Body:#{response.body}"
+            end
+# end of directmessages.each do |message|
+end
+
+
+## Establish Keywords
+keywords = ["pubquestbot", "drinks"]
+
+## Establish Bar Locations
+bars = [0,1,2,6,2,5,6,7,11,9,10,11,7,13]
+barnames = ["Start", "Bar 1", "Bar2", "Bar 333", "Bar 4", "Bar Five", "Bar666", "Bar 7", "Bar Eight", "Nine9", "Ten", "Bar Eleven", "Bar 12", "Bar 13"]
+barsnls = ["Start","A slow start to ","Go on to ","LADDER! Go straight to ","SNAKE! Go back to ","Move on to ","Head to ","Go on to ","LADDER! Go straight to ","Dance on to ","Rock on to ","Nearly there! Go to ","SNAKE! (Oooh so close!) Go back to ","The end in sight! Go to "]
+
 
 ## Get User current position from Pubquestbot's 
 ## previous instruction tweets 
