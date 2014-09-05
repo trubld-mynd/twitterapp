@@ -10,7 +10,16 @@ require './config/environment'
 
 class TwitterDM
     def initialize()
-        directmessages = ["Welcome to the Pub Quest 2014! Use twitter to play by texting your drink count at each pub (max 4) WITH A PHOTO to @pubquestbot.", "For example, if you've had 3 drinks, take a photo of your team with the drinks, and tweet '@pubquestbot 3 drinks'. Don't forget the pic!", "pubquestbot will randomly +/-1 to your drink count to determine your roll on the gameboard. Always go where you're told. No cheating!", "You can only post to pubquestbot every 20 minutes. If you do it any more often there may be some nasty surprises in store for you...", "The winner will be the first to the final pub, OR the team that gets the furtherest in 2.5 hours. If you want to keep track of the teams...", "...or check the rules, check out the website at http://www.pubquest.info Now go for it!!"]
+        t = Time::new
+        t_end = Time.new(2014, 09, 05, 22, 0, 0, "+10:00")
+
+        directmessages = ["Welcome to the Pub Quest 2014! Use twitter to play by texting your drink count at each pub (max 4) WITH A PHOTO to @pubquestbot.", 
+            "For example, if you've had 3 drinks, take a photo of your team with the drinks, and tweet '@pubquestbot 3 drinks'. Don't forget the pic!", 
+            "pubquestbot will randomly +/-1 to your drink count to determine your roll on the gameboard. Always go where you're told. No cheating!", 
+            "You can only post to pubquestbot every 20 minutes. If you do it any more often there may be some nasty surprises in store for you...", 
+            "The winner will be the first to the final pub, OR the team that gets the furtherest in 2.5 hours. If you want to keep track of the teams...", 
+            "...or check the rules, check out the website at http://www.pubquest.info Now go for it!!",
+            "The pubquest is over! Come to the final pub for celebratory drinks!"]
 
 ## Verify connection to Twitter API
 consumer_key = OAuth::Consumer.new(
@@ -21,15 +30,55 @@ access_token = OAuth::Token.new(
 "yiXJmkrdheEi4PNGu4IS7WcX1tC9y9hDR06EFqOtIg2Gg")
 baseurl = "https://api.twitter.com"
 
+## Run the following script for each message 
+## in the directmessages array above
+directmessages.each do |message|
+
+    ## Search past pubquestbot tweets for direct messages
+    ## Using the same search method as to establish
+    ## users past pub instructions
+    firstpath = "/1.1/statuses/user_timeline.json"
+    locationquery = URI.encode_www_form(
+        "screen_name" => "pubquestbot",
+        "count" => 200,
+        )
+    firstaddress = URI("#{baseurl}#{firstpath}?#{locationquery}")
+    request = Net::HTTP::Get.new firstaddress.request_uri
+
+    http             = Net::HTTP.new firstaddress.host, firstaddress.port
+    http.use_ssl     = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+
+    request.oauth! http, consumer_key, access_token
+    http.start
+    response = http.request request
+
+    pasttweets = nil
+    if response.code == '200' then
+      pasttweets = JSON.parse(response.body)
+        pasttweets.reverse_each do |pasttweet|
+        ## set message_to_tweet if don't find message in pasttweets
+        message_to_tweet = case message
+        when pasttweet then break
+        when directmessages.last then message if t >= t_end
+        else message
+        # end of message_to_tweet case
+        end 
+
+        # end of bottweets.reverse_each
+        end
+    # end of response.code == '200'
+    end    
+
 ## Post direct tweets for pubquest instructions
 ## Use same script for outgoing Tweets
 ## As section 3 of the search & tweet.
-directmessages.each do |message|
+
             thirdpath    = "/1.1/statuses/update.json"
             thirdaddress = URI("#{baseurl}#{thirdpath}")
             request = Net::HTTP::Post.new thirdaddress.request_uri
             request.set_form_data(
-              "status" => message,
+              "status" => message_to_tweet,
             )
             
             # Set up HTTP.
@@ -57,11 +106,13 @@ directmessages.each do |message|
     end
 # end of class TwitterDM 
 end
-
+#####################################
+#####################################
+#####################################
 class TwitterTweet
     def initialize()
 
-t = Time::new - (60 * 20)
+t = Time::new
 puts t
 
 ## Establish Users
@@ -299,5 +350,5 @@ end
 
 include Clockwork
 
+every(2.minutes, 'Queueing instruction-tweets') { Delayed::Job.enqueue TwitterDM.new }
 every(2.minutes, 'Queueing twitter-tweet') { Delayed::Job.enqueue TwitterTweet.new }
-every(1.day, 'Queueing instruction-tweets', :at => '12:40') { Delayed::Job.enqueue TwitterDM.new }
