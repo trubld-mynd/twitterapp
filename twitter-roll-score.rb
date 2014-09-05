@@ -11,14 +11,15 @@ require './config/environment'
 class TwitterDM
     def initialize()
         t = Time::new
-        t_end = Time.new(2014,9,5,22,30,0,"+10:00")
+        $t_end = Time.new(2014,9,5,23,00,0,"+10:00")
 
         directmessages = ["Welcome to the Pub Quest 2014! Use twitter to play by texting your drink count at each pub (max 4) WITH A PHOTO to @pubquestbot.", 
             "For example, if you've had 3 drinks, take a photo of your team with the drinks, and tweet '@pubquestbot 3 drinks'. Don't forget the pic!", 
             "pubquestbot will randomly +/-1 to your drink count to determine your roll on the gameboard. Always go where you're told. No cheating!", 
             "You can only post to pubquestbot every 20 minutes. If you do it any more often there may be some nasty surprises in store for you...", 
             "The winner will be the first to the final pub, OR the team that gets the furtherest in 2.5 hours. If you want to keep track of the teams...", 
-            "...or check the rules, check out the website at http://www.pubquest.info Now go for it!!",
+            "...or check the rules, check out the website at http://www.pubquest.info", 
+            "LET THE GAMES BEGIN!",
             "The pubquest is over! Come to the final pub for celebratory drinks!"]
 
 ## Verify connection to Twitter API
@@ -32,6 +33,7 @@ baseurl = "https://api.twitter.com"
 
 ## Run the following script for each message 
 ## in the directmessages array above
+message_to_tweet = nil
 directmessages.each do |message|
 
     ## Search past pubquestbot tweets for direct messages
@@ -60,7 +62,7 @@ directmessages.each do |message|
         ## set message_to_tweet if don't find message in pasttweets
         message_to_tweet = case message
         when pasttweet then break
-        when directmessages.last then message if t > t_end
+        when directmessages.last then message if t > $t_end
         else message
         # end of message_to_tweet case
         end 
@@ -100,6 +102,7 @@ directmessages.each do |message|
               puts "Could not send the Tweet! " +
               "Code:#{response.code} Body:#{response.body}"
             end
+            sleep 5
         # end of directmessages.each do |message|
         end
     # end of def initialize()
@@ -169,15 +172,11 @@ if response.code == '200' then
     ## Identify User from bottweet
     to_user = bottweet["in_reply_to_screen_name"]
     to_user_freeze = to_user.freeze
-    puts to_user
     if to_user != nil && to_user != ""
         ## SPLIT TWEET UP INTO WORDS 
     	botwords = bottweet["text"].to_s.split(" ")
     	lastpub = botwords.last.to_i
-    	puts users_score[to_user]
-    	puts lastpub
-        users_score[to_user_freeze] += lastpub
-        puts users_score[to_user]
+        users_score[to_user_freeze] = lastpub
     # if to_user != nil
     end
     # end of bottweets.reverse_each
@@ -197,7 +196,7 @@ users_list.each do |name, number|
 secondpath = "/1.1/statuses/user_timeline.json"
 userquery = URI.encode_www_form(
 	"screen_name" => name,
-	"count" => 20,
+	"count" => 15,
 	)
 secondaddress = URI("#{baseurl}#{secondpath}?#{userquery}")
 request = Net::HTTP::Get.new secondaddress.request_uri
@@ -215,7 +214,10 @@ tweet_t = nil
 if response.code == '200' then
   tweets = JSON.parse(response.body)
     tweets.reverse_each do |tweet|
-        
+        tweetout = nil
+        rollcount = 0
+        rollout = Array.new
+        tweetout = Array.new        
         ## Get tweet location (if available) and push to 
         ## users_last_location hash
         tweet_geo = tweet["coordinates"]
@@ -228,13 +230,14 @@ if response.code == '200' then
         time_arr.insert(3, time_time[0].to_i, time_time[1].to_i, time_time[2].to_i)
         tweet_t = Time.new(time_arr[7].to_i,Date::ABBR_MONTHNAMES.index(time_arr[1]),time_arr[2].to_i,time_arr[3],time_arr[4],time_arr[5])
         
-        if users_last_time[name] == 0 || (tweet_t > (users_last_time[name] + (60 * 20)))
+        if users_last_time[name] == 0 || (tweet_t > (users_last_time[name] + (60 * 20))) 
 
-        puts tweet["user"]["screen_name"] + " - " + tweet["text"]
-        tweetout = nil
-        rollcount = 0
-        rollout = Array.new
-        tweetout = Array.new
+            if tweet_t < ($t_end - 160) && (users_score[name]) == 0
+                tweetout << "@#{name} Go to the first bar at #{barnames[1]} - # 1"
+            end
+        ## puts tweet["user"]["screen_name"] + " - " + tweet["text"]
+        ## ^ Removed because list of tweets is flooding heroku logs
+
         # CHECK TWEET FOR KEY WORDS
         if keywords.all?{|keyword| tweet["text"].to_s.downcase.include? keyword}
         # If Key word found in tweet
@@ -254,7 +257,7 @@ if response.code == '200' then
             botroll = - 1 + rand(3)
             roll = (word.to_i + botroll)
             botroll_talk = case botroll
-                when -1 then ", but Pubquestbot takes 1! "
+                when -1 then ", but Pubquestbot takes 1 off you! "
                 when 1 then ", but Pubquestbot gives you +1! "
                 else ". "
             end
@@ -262,7 +265,7 @@ if response.code == '200' then
             go_to_barname = barnames[go_to_bar]
             go_to_bartalk = barsnls[(users_score[name] + roll)]
 
-            tweetout << "@#{name} Drink count is #{word.to_i}#{botroll_talk}You roll #{roll} to ##{(users_score[name] + roll)} - #{go_to_bartalk}#{go_to_barname} - # #{go_to_bar}"
+            tweetout << "@#{name} You're on #{users_score[name]} and drank #{word.to_i}#{botroll_talk}You roll #{roll} to ##{(users_score[name] + roll)} - #{go_to_bartalk}#{go_to_barname} - # #{go_to_bar}"
             users_score[name] = go_to_bar.to_i
             users_last_time[name] = tweet_t
             rollcount += 1
@@ -298,7 +301,7 @@ if response.code == '200' then
 		    thirdaddress = URI("#{baseurl}#{thirdpath}")
 		    request = Net::HTTP::Post.new thirdaddress.request_uri
 		    request.set_form_data(
-		      "status" => "@#{name} - #{tweetout[0]}",
+		      "status" => "#{tweetout[0]}",
 		    )
 		    
 		    # Set up HTTP.
