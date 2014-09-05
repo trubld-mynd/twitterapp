@@ -11,7 +11,7 @@ require './config/environment'
 class TwitterDM
     def initialize()
         t = Time::new
-        $t_end = Time.new(2014,9,5,23,00,0,"+10:00")
+        $t_end = Time.new(2014,9,6,20,00,0,"+10:00")
 
         directmessages = ["Welcome to the Pub Quest 2014! Use twitter to play by texting your drink count at each pub (max 4) WITH A PHOTO to @pubquestbot.", 
             "For example, if you've had 3 drinks, take a photo of your team with the drinks, and tweet '@pubquestbot 3 drinks'. Don't forget the pic!", 
